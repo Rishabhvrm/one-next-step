@@ -15,12 +15,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
 
       - run: npm run build
+        env:
+          VITE_PASSWORD_HASH: ${{ secrets.VITE_PASSWORD_HASH }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
