@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unstuck — your own playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F4EF;
+    --ink:#2A2435;
+    --violet:#4B3A8C;
+    --violet-2:#6B57B0;
+    --violet-soft:#ECE7F8;
+    --clay:#B5612F;
+    --sage:#4E7A5E;
+    --muted:#6E6678;
+    --line:#E6E0D4;
+    --card:#FCFBF8;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:0 20px;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:64px 0 96px;}
+
+  /* ---- intro ---- */
+  .eyebrow{
+    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--violet);font-weight:600;margin:0 0 18px;
+  }
+  h1{
+    font-family:"Fraunces",serif;
+    font-weight:500;font-size:clamp(34px,7vw,52px);
+    line-height:1.04;letter-spacing:-.01em;margin:0 0 18px;
+  }
+  h1 em{font-style:italic;color:var(--violet);}
+  .lede{font-size:18px;color:var(--muted);max-width:46ch;margin:0 0 8px;}
+
+  .opening-quote{
+    font-family:"Fraunces",serif;font-style:italic;font-size:19px;
+    color:var(--ink);border-left:2px solid var(--violet);
+    padding:6px 0 6px 20px;margin:34px 0 0;max-width:50ch;
+  }
+
+  /* ---- section heads ---- */
+  .sec{margin-top:68px;}
+  .sec-num{
+    font-family:"Hanken Grotesk";font-size:12.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;
+    display:flex;align-items:center;gap:12px;margin:0 0 6px;
+  }
+  .sec-num::after{content:"";flex:1;height:1px;background:var(--line);}
+  .sec-num b{color:var(--violet);font-weight:600;}
+  h2{
+    font-family:"Fraunces",serif;font-weight:500;font-size:27px;
+    line-height:1.1;margin:0 0 6px;letter-spacing:-.01em;
+  }
+  .sec-sub{color:var(--muted);font-size:15.5px;margin:0 0 22px;}
+
+  /* ---- triage accordion ---- */
+  .triage{display:flex;flex-direction:column;gap:10px;}
+  .row{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    overflow:hidden;transition:border-color .2s ease,box-shadow .2s ease;
+  }
+  .row.open{border-color:var(--violet-2);box-shadow:0 6px 22px -14px rgba(75,58,140,.5);}
+  .row-btn{
+    width:100%;text-align:left;background:none;border:0;cursor:pointer;
+    font-family:inherit;color:var(--ink);font-size:17px;font-weight:600;
+    padding:17px 20px;display:flex;align-items:center;gap:14px;
+  }
+  .row-btn:focus-visible{outline:2px solid var(--violet);outline-offset:-2px;}
+  .feel{font-style:italic;font-family:"Fraunces",serif;font-weight:400;color:var(--ink);}
+  .chev{
+    margin-left:auto;flex:none;width:22px;height:22px;color:var(--violet);
+    transition:transform .25s ease;
+  }
+  .row.open .chev{transform:rotate(90deg);}
+  .panel{
+    display:grid;grid-template-rows:0fr;
+    transition:grid-template-rows .3s ease;
+  }
+  .row.open .panel{grid-template-rows:1fr;}
+  .panel-inner{overflow:hidden;min-height:0;}
+  .panel-pad{padding:2px 20px 22px;}
+  .why-label,.move-label{
+    font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+    margin:0 0 3px;
+  }
+  .why-label{color:var(--muted);}
+  .why{margin:0 0 16px;color:var(--ink);}
+  .move-label{color:var(--clay);}
+  .move{margin:0 0 18px;color:var(--ink);font-weight:500;}
+  .yourwords{
+    background:var(--violet-soft);border-radius:11px;padding:13px 16px;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .yourwords .mark{color:var(--violet);font-family:"Fraunces",serif;font-size:26px;line-height:.8;flex:none;margin-top:4px;}
+  .yourwords p{margin:0;font-family:"Fraunces",serif;font-style:italic;font-size:16px;color:var(--violet);}
+  .yourwords .tag{display:block;font-family:"Hanken Grotesk";font-style:normal;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px;font-weight:600;}
+
+  /* ---- loop diagram ---- */
+  .loop-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 14px 10px;}
+  svg.loop{width:100%;height:auto;display:block;}
+  .loop-foot{
+    display:flex;gap:18px;flex-wrap:wrap;padding:6px 8px 12px;margin-top:4px;
+  }
+  .loop-key{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;color:var(--ink);flex:1 1 230px;}
+  .loop-key .dot{width:11px;height:11px;border-radius:3px;background:var(--violet);flex:none;margin-top:5px;}
+  .loop-key b{color:var(--violet);font-weight:600;}
+
+  /* ---- reframe / good job ---- */
+  .reframe{
+    background:linear-gradient(180deg,rgba(78,122,94,.07),rgba(78,122,94,.03));
+    border:1px solid rgba(78,122,94,.28);border-radius:18px;padding:24px 22px;
+  }
+  .reframe h3{font-family:"Fraunces",serif;font-weight:500;font-size:20px;margin:0 0 4px;}
+  .reframe p.s{margin:0 0 16px;color:var(--muted);font-size:15px;}
+  .wins{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .wins li{display:flex;gap:11px;align-items:flex-start;font-size:16px;}
+  .wins .check{flex:none;width:20px;height:20px;color:var(--sage);margin-top:2px;}
+  .reframe .punch{margin:18px 0 0;font-weight:600;color:var(--sage);font-size:16px;}
+
+  /* ---- one thing ---- */
+  .onething{background:var(--ink);color:#F3F0EC;border-radius:18px;padding:26px 24px;}
+  .onething h2{color:#fff;}
+  .onething .sec-sub{color:rgba(243,240,236,.66);}
+  .one-input-row{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
+  .one-input{
+    flex:1 1 240px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);
+    border-radius:11px;color:#fff;font-family:inherit;font-size:16px;padding:13px 15px;
+  }
+  .one-input::placeholder{color:rgba(243,240,236,.45);}
+  .one-input:focus{outline:2px solid var(--violet-2);outline-offset:1px;}
+  .one-btn{
+    background:var(--violet-2);color:#fff;border:0;border-radius:11px;font-family:inherit;
+    font-weight:600;font-size:15px;padding:13px 22px;cursor:pointer;transition:background .15s;
+  }
+  .one-btn:hover{background:#7d68c4;}
+  .one-btn:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .one-out{
+    margin-top:18px;display:none;background:rgba(107,87,176,.18);border:1px solid rgba(107,87,176,.4);
+    border-radius:12px;padding:16px 18px;
+  }
+  .one-out.show{display:block;}
+  .one-out .lbl{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--violet-2);font-weight:700;margin:0 0 5px;}
+  .one-out .txt{font-family:"Fraunces",serif;font-size:19px;margin:0 0 8px;color:#fff;}
+  .one-out .tiny{margin:0;font-size:14px;color:rgba(243,240,236,.7);}
+
+  /* ---- footer ---- */
+  .closer{
+    margin-top:64px;text-align:center;
+  }
+  .closer p{
+    font-family:"Fraunces",serif;font-style:italic;font-size:21px;color:var(--violet);
+    margin:0 auto;max-width:30ch;line-height:1.35;
+  }
+  .closer .by{margin-top:14px;font-style:normal;font-family:"Hanken Grotesk";font-size:13px;color:var(--muted);letter-spacing:.04em;}
+
+  @media (max-width:520px){
+    body{font-size:16px;}
+    .wrap{padding:48px 0 72px;}
+    .row-btn{font-size:15.5px;padding:15px 16px;gap:10px;}
+    .panel-pad{padding:2px 16px 20px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">For Rishabh · when the gap feels loud</p>
+  <h1>You already know<br>what to do. <em>This just<br>hands it back.</em></h1>
+  <p class="lede">Every line below came out of your own journal and that whiteboard. Nothing new — just your clearest thinking, ready when the foggy version of you needs it.</p>
+  <p class="opening-quote">"What if you lived the way you would if you'd already achieved your goals — what would you do? Maybe do that, without the guilt."</p>
+
+  <!-- 1. RIGHT NOW -->
+  <section class="sec">
+    <p class="sec-num"><b>01</b> in the moment</p>
+    <h2>Which one is happening right now?</h2>
+    <p class="sec-sub">Tap the one that fits. Then do the small move — not the whole plan.</p>
+
+    <div class="triage" id="triage">
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>I've got time but I'm <span class="feel">not starting</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">The thing in your head is too big to grab onto. Your brain stalls at "work on certifications" because there's no edge to grip.</p>
+          <p class="move-label">the move</p>
+          <p class="move">Shrink it until it's almost silly. "Open the course. Read one page." Start there and let momentum do the rest.</p>
+          <div class="yourwords"><span class="mark">"</span><p>Pick one thing, stay on it from start to finish.<span class="tag">— your journal</span></p></div>
+        </div></div></div>
+      </div>
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>I'm <span class="feel">lost in my phone</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">Tired-brain reaches for the easy hit. Today Reddit, before that Insta. It isn't weakness — it's the path of least resistance doing its job.</p>
+          <p class="move-label">the move</p>
+          <p class="move">Put the phone in another room, not just face-down. Say the one task out loud before you pick anything else up.</p>
+          <div class="yourwords"><span class="mark">"</span><p>Mindlessly scrolled. — you already logged out of Insta. You know this move.<span class="tag">— your journal</span></p></div>
+        </div></div></div>
+      </div>
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>I did something but it <span class="feel">feels like nothing</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">You're scoring yourself against the 100% you imagined, so real progress reads as failure. That math quietly drains the tank for next time.</p>
+          <p class="move-label">the move</p>
+          <p class="move">10% done beats 0% every single time. Write down what you <em>did</em> do. That's the real number — the imagined one was never on the table.</p>
+          <div class="yourwords"><span class="mark">"</span><p>Good job — coming to the café. Going on a run. Not neglecting your body.<span class="tag">— your journal, today</span></p></div>
+        </div></div></div>
+      </div>
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>Too much to do — I'm <span class="feel">frozen</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">You picked too much, fell short, and the shortfall turned into guilt — and the guilt is now stopping you from starting at all.</p>
+          <p class="move-label">the move</p>
+          <p class="move">Cross everything off except one. The rest genuinely waits until that one is done. Less on the list is how the list gets done.</p>
+          <div class="yourwords"><span class="mark">"</span><p>You pick too much stuff to do, and when you feel short, the demotivation comes in.<span class="tag">— your journal</span></p></div>
+        </div></div></div>
+      </div>
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>I feel <span class="feel">slow and not in control</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">One task straight into the next, no pause, no air. Control doesn't come from going faster — it comes from leaving space between things.</p>
+          <p class="move-label">the move</p>
+          <p class="move">Take ten minutes that are just yours, on purpose, then come back. Slower-with-breaks beats fast-and-frayed, and it feels like yours.</p>
+          <div class="yourwords"><span class="mark">"</span><p>Not taking time out for yourself causes you to feel not in control.<span class="tag">— your journal</span></p></div>
+        </div></div></div>
+      </div>
+
+      <div class="row">
+        <button class="row-btn" aria-expanded="false">
+          <span>I just <span class="feel">can't get motivated</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="panel"><div class="panel-inner"><div class="panel-pad">
+          <p class="why-label">why</p>
+          <p class="why">You're waiting for motivation to arrive before you build. But for you it runs the other way — remember the gym app? The drive showed up <em>because</em> you were making a real thing.</p>
+          <p class="move-label">the move</p>
+          <p class="move">Don't try to summon motivation. Pick one tangible thing to build and start it small. The wanting-to follows the doing, not the other way around.</p>
+          <div class="yourwords"><span class="mark">"</span><p>The opposite of when I was working on the gym app.<span class="tag">— your journal</span></p></div>
+        </div></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2. THE LOOP -->
+  <section class="sec">
+    <p class="sec-num"><b>02</b> the pattern underneath</p>
+    <h2>The loop you named yourself</h2>
+    <p class="sec-sub">Almost everything above is one cycle. You don't have to fight all of it — break it at either purple point and the whole thing loosens.</p>
+
+    <div class="loop-card">
+      <svg class="loop" viewBox="0 0 640 480" role="img" aria-label="A cycle: pick too much, fall short, feel bad, stall, things pile up, and back to pick too much. Two break points: commit to less, and log what you did.">
+        <!-- ring guide -->
+        <circle cx="320" cy="230" r="160" fill="none" stroke="#E6E0D4" stroke-width="1.4" stroke-dasharray="2 7" stroke-linecap="round"/>
+
+        <!-- direction arrows at segment midpoints -->
+        <g fill="#C9C0D8">
+          <path d="M0 -6 L7 0 L0 6 Z" transform="translate(396,125.5) rotate(36)"/>
+          <path d="M0 -6 L7 0 L0 6 Z" transform="translate(443,270) rotate(108)"/>
+          <path d="M0 -6 L7 0 L0 6 Z" transform="translate(320,359) rotate(180)"/>
+          <path d="M0 -6 L7 0 L0 6 Z" transform="translate(197,270) rotate(252)"/>
+          <path d="M0 -6 L7 0 L0 6 Z" transform="translate(244,125.5) rotate(324)"/>
+        </g>
+
+        <!-- nodes -->
+        <g font-family="Hanken Grotesk, sans-serif" font-weight="600" font-size="15" text-anchor="middle">
+          <g><rect x="262" y="50" width="116" height="40" rx="12" fill="#fff" stroke="#E6E0D4"/><text x="320" y="75" fill="#2A2435">Pick too much</text></g>
+          <g><rect x="416" y="161" width="98" height="40" rx="12" fill="#fff" stroke="#E6E0D4"/><text x="465" y="186" fill="#2A2435">Fall short</text></g>
+          <g><rect x="362" y="339" width="100" height="40" rx="12" fill="#fff" stroke="#E6E0D4"/><text x="412" y="364" fill="#2A2435">Feel bad</text></g>
+          <g><rect x="178" y="339" width="96" height="40" rx="12" fill="#fff" stroke="#E6E0D4"/><text x="226" y="364" fill="#2A2435">Can't start</text></g>
+          <g><rect x="120" y="161" width="96" height="40" rx="12" fill="#fff" stroke="#E6E0D4"/><text x="168" y="186" fill="#2A2435">Piles up</text></g>
+        </g>
+
+        <!-- break point 1: commit to less (top-left, points at E->A arc midpoint ~244,125) -->
+        <line x1="150" y1="78" x2="232" y2="118" stroke="#4B3A8C" stroke-width="1.6" stroke-dasharray="3 4"/>
+        <circle cx="232" cy="118" r="4" fill="#4B3A8C"/>
+        <g><rect x="44" y="56" width="118" height="42" rx="13" fill="#4B3A8C"/><text x="103" y="76" font-family="Hanken Grotesk, sans-serif" font-weight="600" font-size="13.5" fill="#fff" text-anchor="middle">break here:</text><text x="103" y="91" font-family="Fraunces, serif" font-style="italic" font-size="13.5" fill="#EDE9F7" text-anchor="middle">commit to less</text></g>
+
+        <!-- break point 2: log what you did (bottom, points at C->D arc midpoint 320,359) -->
+        <line x1="320" y1="430" x2="320" y2="385" stroke="#4B3A8C" stroke-width="1.6" stroke-dasharray="3 4"/>
+        <circle cx="320" cy="385" r="4" fill="#4B3A8C"/>
+        <g><rect x="232" y="430" width="176" height="42" rx="13" fill="#4B3A8C"/><text x="320" y="450" font-family="Hanken Grotesk, sans-serif" font-weight="600" font-size="13.5" fill="#fff" text-anchor="middle">break here:</text><text x="320" y="465" font-family="Fraunces, serif" font-style="italic" font-size="13.5" fill="#EDE9F7" text-anchor="middle">log what you DID, not what you didn't</text></g>
+      </svg>
+
+      <div class="loop-foot">
+        <div class="loop-key"><span class="dot"></span><span><b>Commit to less.</b> Fewer promises means fewer broken ones. The list only moves when it's short.</span></div>
+        <div class="loop-key"><span class="dot"></span><span><b>Log what you did.</b> Counting the win instead of the gap is what keeps the tank from emptying.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. GOOD JOB -->
+  <section class="sec">
+    <p class="sec-num"><b>03</b> the antidote</p>
+    <h2>Score the day you actually had</h2>
+    <div class="reframe">
+      <h3>Today's real ledger</h3>
+      <p class="s">Straight from your own "Good Job" list — this is what a "lazy, unmotivated" day apparently looks like for you:</p>
+      <ul class="wins">
+        <li><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Got yourself to the café — and felt better the moment you did.</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Went on a run.</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Smoothie, protein shake, eggs — fed your body instead of neglecting it.</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Sat down and wrote honestly about where you're at.</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Came back to the plan. (That was literally on your list as the hard part.)</span></li>
+      </ul>
+      <p class="punch">The person who did all that is not behind. They're just hard on themselves.</p>
+    </div>
+  </section>
+
+  <!-- 4. ONE THING -->
+  <section class="sec">
+    <div class="onething">
+      <p class="sec-num" style="color:rgba(243,240,236,.55)"><b style="color:var(--violet-2)">04</b> before you close this</p>
+      <h2>Name one thing. Make it small.</h2>
+      <p class="sec-sub">Not the plan. Not the day. One move so small it would be embarrassing to fail at.</p>
+      <div class="one-input-row">
+        <input class="one-input" id="oneInput" type="text" placeholder="e.g. open the cert course and read page one" maxlength="120" autocomplete="off">
+        <button class="one-btn" id="oneBtn">That's the one</button>
+      </div>
+      <div class="one-out" id="oneOut">
+        <p class="lbl">your one thing</p>
+        <p class="txt" id="oneTxt"></p>
+        <p class="tiny">Do only this. Everything else on the whiteboard waits. When it's done, it's a win — log it, don't audit it.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="closer">
+    <p>"Coming back to this" was on your list of challenges. You just did it. That was the action.</p>
+    <p class="by">your words · for the days they're hard to hear</p>
+  </div>
+
+</div>
+
+<script>
+  // accordion — one open at a time
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#triage .row'));
+  rows.forEach(function(row){
+    var btn = row.querySelector('.row-btn');
+    btn.addEventListener('click', function(){
+      var isOpen = row.classList.contains('open');
+      rows.forEach(function(r){
+        r.classList.remove('open');
+        r.querySelector('.row-btn').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){
+        row.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+
+  // one thing
+  var input = document.getElementById('oneInput');
+  var btn = document.getElementById('oneBtn');
+  var out = document.getElementById('oneOut');
+  var txt = document.getElementById('oneTxt');
+  function commit(){
+    var v = input.value.trim();
+    if(!v) { input.focus(); return; }
+    txt.textContent = v;
+    out.classList.add('show');
+  }
+  btn.addEventListener('click', commit);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') commit(); });
+</script>
+</body>
+</html>
